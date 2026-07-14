@@ -189,8 +189,7 @@ class StatesModule {
         if (bestIndex === -1) return index;
         const bestState = availableStates[bestIndex];
         const [bestX, bestY] = pack.cells.p[bestState.center];
-        const bestDistance =
-          (bestX / graphWidth - realm.target[0]) ** 2 + (bestY / graphHeight - realm.target[1]) ** 2;
+        const bestDistance = (bestX / graphWidth - realm.target[0]) ** 2 + (bestY / graphHeight - realm.target[1]) ** 2;
         return distance < bestDistance ? index : bestIndex;
       }, -1);
 
