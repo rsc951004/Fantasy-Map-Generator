@@ -249,6 +249,7 @@ declare global {
   var drawCultures: () => void;
   var drawReligions: () => void;
   var drawStates: () => void;
+  var drawSuperstates: () => void;
   var drawBorders: () => void;
   var drawProvinces: () => void;
   var drawStateLabels: (ids?: number[]) => void;
@@ -256,6 +257,7 @@ declare global {
 
   var toggleCultures: () => void;
   var toggleStates: () => void;
+  var toggleSuperstates: (event?: MouseEvent) => void;
   var toggleBiomes: () => void;
   var toggleReligions: () => void;
   var toggleProvinces: () => void;

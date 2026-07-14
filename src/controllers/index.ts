@@ -34,6 +34,7 @@ export const Controllers = createRegistry({
   RouteGroupsEditor: () => import("@/controllers/route-groups-editor").then(m => m.RouteGroupsEditor),
   RoutesOverview: () => import("@/controllers/routes-overview").then(m => m.RoutesOverview),
   StatesEditor: () => import("@/controllers/states-editor").then(m => m.StatesEditor),
+  SuperstatesEditor: () => import("@/controllers/superstates-editor").then(m => m.SuperstatesEditor),
   TradeAnimationEditor: () => import("@/controllers/trade-animation-editor").then(m => m.TradeAnimationEditor),
   TradeDetails: () => import("@/controllers/trade-details").then(m => m.TradeDetails),
   View3d: () => import("@/controllers/view-3d").then(m => m.View3d)

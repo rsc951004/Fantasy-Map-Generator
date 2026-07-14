@@ -11,6 +11,7 @@ toolsContent.addEventListener("click", function (event) {
   if (button === "editHeightmapButton") editHeightmap();
   else if (button === "editBiomesButton") editBiomes();
   else if (button === "editStatesButton") window.Controllers.StatesEditor.open();
+  else if (button === "editSuperstatesButton") window.Controllers.SuperstatesEditor.open();
   else if (button === "editProvincesButton") editProvinces();
   else if (button === "editDiplomacyButton") editDiplomacy();
   else if (button === "editCoastlineSettings") window.Controllers.CoastlineEditor.open();
@@ -167,6 +168,9 @@ function regenerateStates() {
   if (!newStates) return;
 
   pack.states = newStates;
+  pack.states.forEach(state => delete state.superstate);
+  pack.superstates = [{ i: 0, name: "Sin superestado", fullName: "Sin superestado", color: "#999999" }];
+  if (layerIsOn("toggleSuperstates")) toggleSuperstates();
   States.expandStates();
   States.normalize();
   States.getPoles();

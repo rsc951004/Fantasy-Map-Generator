@@ -423,6 +423,9 @@ async function parseLoadedData(data: string[], mapVersion: string | null): Promi
     pack.features = JSON.parse(data[12]);
     pack.cultures = JSON.parse(data[13]);
     pack.states = JSON.parse(data[14]);
+    pack.superstates = data[46]
+      ? JSON.parse(data[46])
+      : [{ i: 0, name: "Sin superestado", fullName: "Sin superestado", color: "#999999" }];
     pack.burgs = JSON.parse(data[15]);
     pack.religions = data[29] ? JSON.parse(data[29]) : ([{ i: 0, name: "No religion" }] as typeof pack.religions);
     pack.provinces = data[30] ? JSON.parse(data[30]) : ([0] as unknown as typeof pack.provinces);
@@ -500,6 +503,7 @@ async function parseLoadedData(data: string[], mapVersion: string | null): Promi
       if (isVisible(terrain) && hasChildren(terrain)) turnOn("toggleRelief");
       if (hasChildren(relig)) turnOn("toggleReligions");
       if (hasChildren(cults)) turnOn("toggleCultures");
+      if (hasChildren(viewbox.select("#superstatesBody"))) turnOn("toggleSuperstates");
       if (hasChildren(statesBody)) turnOn("toggleStates");
       if (hasChildren(provs)) turnOn("toggleProvinces");
       if (hasChildren(zones) && isVisible(zones)) turnOn("toggleZones");

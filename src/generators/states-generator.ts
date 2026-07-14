@@ -52,6 +52,16 @@ export interface State {
   salesTax: number;
   pollTax: number;
   treasury: number;
+  superstate?: number;
+}
+
+export interface Superstate {
+  i: number;
+  name: string;
+  fullName: string;
+  color: string;
+  capitalState?: number;
+  removed?: boolean;
 }
 
 interface Campaign {
@@ -75,6 +85,7 @@ const DEFAULT_TAX: TaxBases = DEFAULT_TAX_BY_FORM.Monarchy;
 
 class StatesModule {
   private createStates() {
+    pack.superstates = [{ i: 0, name: "Sin superestado", fullName: "Sin superestado", color: "#999999" }];
     const states: State[] = [{ i: 0, name: "Neutrals", salesTax: 0, pollTax: 0, treasury: 0 } as State];
     const each5th = each(5);
     const sizeVariety = (ensureEl("sizeVariety") as HTMLInputElement).valueAsNumber;

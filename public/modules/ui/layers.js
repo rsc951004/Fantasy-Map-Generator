@@ -238,6 +238,7 @@ function drawLayers() {
   if (layerIsOn("toggleRelief")) drawReliefIcons();
   if (layerIsOn("toggleReligions")) drawReligions();
   if (layerIsOn("toggleCultures")) drawCultures();
+  if (layerIsOn("toggleSuperstates")) drawSuperstates();
   if (layerIsOn("toggleStates")) drawStates();
   if (layerIsOn("toggleProvinces")) drawProvinces();
   if (layerIsOn("toggleTrade")) TradeAnimation.start();
@@ -563,6 +564,84 @@ function drawStates() {
   ensureEl("statesHalo").innerHTML = renderHalo ? haloPaths.join("") : "";
 
   TIME && console.timeEnd("drawStates");
+}
+
+function toggleSuperstates() {
+  const active = (pack.superstates || []).some(superstate => superstate.i && !superstate.removed);
+  const body = ensureSuperstateLayers().select("#superstatesBody");
+
+  if (!layerIsOn("toggleSuperstates") && active) {
+    turnButtonOn("toggleSuperstates");
+    drawSuperstates();
+  } else if (layerIsOn("toggleSuperstates")) {
+    body.selectAll("path").remove();
+    ensureEl("superstateLabels").innerHTML = "";
+    turnButtonOff("toggleSuperstates");
+  }
+}
+
+function drawSuperstates() {
+  TIME && console.time("drawSuperstates");
+  const layer = ensureSuperstateLayers();
+  const bodyPaths = [];
+  const labelPaths = [];
+  const superstates = pack.superstates || [];
+  const getSuperstateId = cellId => {
+    const state = pack.states[pack.cells.state[cellId]];
+    const superstate = state?.superstate ? superstates[state.superstate] : null;
+    return superstate && !superstate.removed ? superstate.i : 0;
+  };
+
+  const isolines = getIsolines(pack, getSuperstateId, { fill: true, waterGap: true });
+  Object.entries(isolines).forEach(([index, { fill, waterGap }]) => {
+    const superstate = superstates[index];
+    if (!superstate || superstate.removed) return;
+    if (fill)
+      bodyPaths.push(
+        `<path d="${fill}" fill="${superstate.color}" fill-opacity=".28" stroke="${superstate.color}"` +
+          ` stroke-opacity=".9" stroke-width="2" stroke-linejoin="round" id="superstate${index}" />`
+      );
+    if (waterGap)
+      bodyPaths.push(
+        `<path d="${waterGap}" fill="none" stroke="${superstate.color}" stroke-width="4" id="superstate-gap${index}" />`
+      );
+
+    const members = pack.states.filter(state => state.i && !state.removed && state.superstate === superstate.i);
+    const capital = members.find(state => state.i === superstate.capitalState);
+    const anchor =
+      capital ||
+      members.reduce(
+        (largest, state) => (!largest || (state.cells || 0) > (largest.cells || 0) ? state : largest),
+        null
+      );
+    if (!anchor) return;
+    const pole = anchor.pole || pack.cells.p[anchor.center];
+    if (!pole) return;
+    const cells = members.reduce((sum, state) => sum + (state.cells || 0), 0);
+    const fontSize = Math.max(12, Math.min(28, Math.sqrt(cells) * 1.8));
+    labelPaths.push(
+      `<text x="${pole[0]}" y="${pole[1]}" text-anchor="middle" dominant-baseline="middle"` +
+        ` font-size="${fontSize}" font-family="Almendra SC" font-weight="bold" fill="#222" stroke="#fff"` +
+        ` stroke-width="3" paint-order="stroke" id="superstateLabel${index}">` +
+        `${escapeHtml(superstate.fullName || superstate.name)}</text>`
+    );
+  });
+
+  layer.select("#superstatesBody").html(bodyPaths.join(""));
+  layer.select("#superstateLabels").html(labelPaths.join(""));
+  TIME && console.timeEnd("drawSuperstates");
+
+  function escapeHtml(value) {
+    return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+  }
+}
+
+function ensureSuperstateLayers() {
+  let layer = viewbox.select("#superstates");
+  if (!layer.size()) layer = viewbox.insert("g", "#provs").attr("id", "superstates");
+  if (!layer.select("#superstatesBody").size()) layer.append("g").attr("id", "superstatesBody");
+  if (!layer.select("#superstateLabels").size()) layer.append("g").attr("id", "superstateLabels");
+  return layer;
 }
 
 function toggleBorders(event) {
@@ -1061,6 +1140,7 @@ function getLayer(id) {
   if (id === "toggleRelief") return $("#terrain");
   if (id === "toggleReligions") return $("#relig");
   if (id === "toggleCultures") return $("#cults");
+  if (id === "toggleSuperstates") return $("#superstates");
   if (id === "toggleStates") return $("#regions");
   if (id === "toggleProvinces") return $("#provs");
   if (id === "toggleBorders") return $("#borders");

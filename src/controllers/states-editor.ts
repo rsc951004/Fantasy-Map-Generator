@@ -1640,18 +1640,37 @@ function openStateMergeDialog(): void {
 
 function downloadStatesCsv(): void {
   const unit = getAreaUnit("2");
-  const headers = `Id,State,Full Name,Form,Color,Capital,Culture,Type,Expansionism,Cells,Burgs,Area ${unit},Total Population,Rural Population,Urban Population`;
+  const headers = [
+    "Id",
+    "State",
+    "Full Name",
+    "Superestado",
+    "Form",
+    "Color",
+    "Capital",
+    "Culture",
+    "Type",
+    "Expansionism",
+    "Cells",
+    "Burgs",
+    `Area ${unit}`,
+    "Total Population",
+    "Rural Population",
+    "Urban Population"
+  ].join(",");
   const lines = Array.from($body.querySelectorAll<HTMLElement>(":scope > div"));
   const data = lines.map($line => {
     const { id, name, form, color, capital, culture, type, expansionism, cells, burgs, area, population } =
       $line.dataset;
-    const { fullName = "", rural, urban } = pack.states[+id!];
+    const { fullName = "", rural, urban, superstate } = pack.states[+id!];
+    const superstateName = pack.superstates?.[superstate || 0]?.name || "";
     const ruralPopulation = Math.round((rural ?? 0) * populationRate);
     const urbanPopulation = Math.round((urban ?? 0) * populationRate * urbanization);
     return [
       id,
       name,
       fullName,
+      superstateName,
       form,
       color,
       capital,

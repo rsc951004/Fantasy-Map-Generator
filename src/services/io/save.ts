@@ -100,6 +100,7 @@ function prepareMapData(): string {
   const packFeatures = JSON.stringify(pack.features);
   const cultures = JSON.stringify(pack.cultures);
   const states = JSON.stringify(pack.states);
+  const superstates = JSON.stringify(pack.superstates || []);
   const burgs = JSON.stringify(pack.burgs);
   const religions = JSON.stringify(pack.religions);
   const provinces = JSON.stringify(pack.provinces);
@@ -179,7 +180,8 @@ function prepareMapData(): string {
     markets,
     deals,
     pack.cells.market,
-    customGoodIcons
+    customGoodIcons,
+    superstates
   ].join("\r\n");
   return mapData;
 }
