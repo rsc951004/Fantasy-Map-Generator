@@ -167,10 +167,9 @@ function regenerateStates() {
   const newStates = recreateStates();
   if (!newStates) return;
 
+  const redrawSuperstates = layerIsOn("toggleSuperstates");
   pack.states = newStates;
-  pack.states.forEach(state => delete state.superstate);
-  pack.superstates = [{ i: 0, name: "Sin superestado", fullName: "Sin superestado", color: "#999999" }];
-  if (layerIsOn("toggleSuperstates")) toggleSuperstates();
+  States.initializeDefaultSuperstate();
   States.expandStates();
   States.normalize();
   States.getPoles();
@@ -180,6 +179,7 @@ function regenerateStates() {
   States.generateCampaigns();
   States.generateDiplomacy();
   States.defineStateForms();
+  if (redrawSuperstates) drawSuperstates();
 
   Provinces.generate(true);
   Provinces.getPoles();

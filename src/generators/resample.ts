@@ -264,14 +264,15 @@ class Resampler {
 
   private restoreStates(parentMap: ParentMapDefinition, projection: (x: number, y: number) => [number, number]) {
     const validStates = new Set(pack.cells.state);
-    pack.superstates = parentMap.pack.superstates || [
-      { i: 0, name: "Sin superestado", fullName: "Sin superestado", color: "#999999" }
-    ];
     pack.states = parentMap.pack.states.map(state => {
       if (!state.i || state.removed) return state;
       if (validStates.has(state.i)) return state;
       return { ...state, removed: true, lock: false };
     });
+
+    const hasSuperstates = parentMap.pack.superstates?.some(superstate => superstate.i && !superstate.removed);
+    if (hasSuperstates) pack.superstates = parentMap.pack.superstates;
+    else States.initializeDefaultSuperstate();
 
     States.getPoles();
 

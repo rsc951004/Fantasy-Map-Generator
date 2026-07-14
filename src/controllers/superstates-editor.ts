@@ -3,8 +3,8 @@ import { ensureEl, getRandomColor } from "@/utils";
 
 const NO_SUPERSTATE: Superstate = {
   i: 0,
-  name: "Sin superestado",
-  fullName: "Sin superestado",
+  name: "No superstate",
+  fullName: "No superstate",
   color: "#999999"
 };
 
@@ -15,8 +15,8 @@ function open(): void {
   render();
 
   $("#superstatesEditor").dialog({
-    title: "Editor de superestados",
-    width: 720,
+    title: "Superstates Editor",
+    width: Math.min(860, window.innerWidth - 40),
     resizable: false,
     position: { my: "right top", at: "right-10 top+10", of: "svg", collision: "fit" }
   });
@@ -44,14 +44,14 @@ function insertEditorHtml(): void {
 
   const html = /* html */ `<div id="superstatesEditor" class="dialog stable">
     <p style="margin: 0 0 0.6em">
-      Los superestados agrupan estados sin reemplazar su diplomacia, economía ni ejército.
+      Superstates group states without replacing their diplomacy, economy, or military.
     </p>
     <div id="superstatesList"></div>
-    <div style="margin: 0.7em 0">
-      <button id="superstatesAdd" class="icon-plus">Crear superestado</button>
-      <button id="superstatesToggleLayer" class="icon-eye">Mostrar u ocultar capa</button>
+    <div style="display: flex; gap: 0.4em; margin: 0.7em 0">
+      <button id="superstatesAdd" class="icon-plus">Create superstate</button>
+      <button id="superstatesToggleLayer" class="icon-eye">Toggle layer</button>
     </div>
-    <div class="separator">Asignación de estados</div>
+    <div class="separator">State assignments</div>
     <div id="superstatesAssignments" style="max-height: 36vh; overflow-y: auto"></div>
   </div>`;
 
@@ -73,7 +73,7 @@ function render(): void {
     .map(superstate => {
       const members = pack.states.filter(state => state.i && !state.removed && state.superstate === superstate.i);
       const capitalOptions = [
-        `<option value="0">Sin capital imperial</option>`,
+        `<option value="0">No imperial capital</option>`,
         ...members.map(
           state =>
             `<option value="${state.i}" ${superstate.capitalState === state.i ? "selected" : ""}>${escapeAttribute(
@@ -84,26 +84,50 @@ function render(): void {
 
       return /* html */ `<div
         data-id="${superstate.i}"
-        style="display:grid;grid-template-columns:2.4em 1fr 1fr 1fr 4em 2em;gap:.35em;align-items:center;margin:.25em 0"
+        style="
+          display: grid;
+          grid-template-columns: 2.5em minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr) max-content 2em;
+          gap: 0.45em;
+          align-items: center;
+          width: 100%;
+          box-sizing: border-box;
+          margin: 0.25em 0;
+        "
       >
-        <input class="superstateColor" type="color" value="${superstate.color}" data-tip="Color del superestado" />
-        <input class="superstateName" value="${escapeAttribute(superstate.name)}" data-tip="Nombre corto" />
+        <input
+          class="superstateColor"
+          type="color"
+          value="${superstate.color}"
+          data-tip="Superstate color"
+          style="width:100%;min-width:0"
+        />
+        <input
+          class="superstateName"
+          value="${escapeAttribute(superstate.name)}"
+          data-tip="Short name"
+          style="width:100%;min-width:0;box-sizing:border-box"
+        />
         <input
           class="superstateFullName"
           value="${escapeAttribute(superstate.fullName || superstate.name)}"
-          data-tip="Nombre completo"
+          data-tip="Full name"
+          style="width:100%;min-width:0;box-sizing:border-box"
         />
-        <select class="superstateCapital" data-tip="Estado que contiene la capital imperial">${capitalOptions}</select>
-        <span data-tip="Cantidad de estados miembros">${members.length} estados</span>
-        <button class="superstateRemove icon-trash-empty" data-tip="Eliminar el superestado"></button>
+        <select
+          class="superstateCapital"
+          data-tip="State containing the imperial capital"
+          style="width:100%;min-width:0;box-sizing:border-box"
+        >${capitalOptions}</select>
+        <span data-tip="Member states count" style="white-space:nowrap">${members.length} state${members.length === 1 ? "" : "s"}</span>
+        <button class="superstateRemove icon-trash-empty" data-tip="Remove superstate"></button>
       </div>`;
     })
     .join("");
 
-  ensureEl("superstatesList").innerHTML = rows || "<p>No hay superestados definidos.</p>";
+  ensureEl("superstatesList").innerHTML = rows || "<p>No superstates are defined.</p>";
 
   const options = [
-    `<option value="0">Sin superestado</option>`,
+    `<option value="0">No superstate</option>`,
     ...active.map(superstate => `<option value="${superstate.i}">${escapeAttribute(superstate.name)}</option>`)
   ].join("");
 
@@ -122,7 +146,7 @@ function render(): void {
 
 function addSuperstate(): void {
   const i = pack.superstates.length;
-  const name = `Superestado ${i}`;
+  const name = `Superstate ${i}`;
   pack.superstates.push({ i, name, fullName: name, color: getRandomColor() });
   render();
   redraw();

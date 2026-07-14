@@ -27,7 +27,7 @@ This glossary covers core terminology, data structures, and concepts used throug
 - **Culture**: A group of cells sharing cultural traits and modifiers.
 - **Burg**: A settlement or city on the map, with population, culture, production, and so on.
 - **State**: A political entity (country, kingdom, etc.) grouping multiple burgs.
-- **Superestado**: Agrupación cartográfica opcional de varios Estados, como un imperio compuesto por reinos. No actúa por sí mismo en los sistemas de diplomacia, economía o ejército.
+- **Superstate**: An optional cartographic grouping of multiple States, such as an empire composed of kingdoms. It does not act independently in diplomacy, economy, or military systems.
 - **Province**: A political or administrative subdivision of a State.
 - **Religion**: A belief system and organization spreading across cells and burgs.
 - **Biome**: A type of environment (e.g., desert, forest, tundra) assigned to cells.

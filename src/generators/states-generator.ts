@@ -82,10 +82,13 @@ const DEFAULT_TAX_BY_FORM: Record<string, TaxBases> = {
   Anarchy: { salesTax: 0, pollTax: 0 }
 };
 const DEFAULT_TAX: TaxBases = DEFAULT_TAX_BY_FORM.Monarchy;
+const DEFAULT_SUPERSTATES: Superstate[] = [
+  { i: 0, name: "No superstate", fullName: "No superstate", color: "#999999" },
+  { i: 1, name: "Dragma", fullName: "The Empire of Dragma", color: "#6b3fa0" }
+];
 
 class StatesModule {
   private createStates() {
-    pack.superstates = [{ i: 0, name: "Sin superestado", fullName: "Sin superestado", color: "#999999" }];
     const states: State[] = [{ i: 0, name: "Neutrals", salesTax: 0, pollTax: 0, treasury: 0 } as State];
     const each5th = each(5);
     const sizeVariety = (ensureEl("sizeVariety") as HTMLInputElement).valueAsNumber;
@@ -152,6 +155,7 @@ class StatesModule {
   generate() {
     TIME && console.time("generateStates");
     pack.states = this.createStates();
+    this.initializeDefaultSuperstate();
     this.expandStates();
     this.normalize();
     this.getPoles();
@@ -161,6 +165,13 @@ class StatesModule {
     this.generateDiplomacy();
 
     TIME && console.timeEnd("generateStates");
+  }
+
+  initializeDefaultSuperstate() {
+    pack.superstates = DEFAULT_SUPERSTATES.map(superstate => ({ ...superstate }));
+    pack.states.forEach(state => {
+      state.superstate = state.i && !state.removed ? 1 : undefined;
+    });
   }
 
   expandStates() {

@@ -1644,7 +1644,7 @@ function downloadStatesCsv(): void {
     "Id",
     "State",
     "Full Name",
-    "Superestado",
+    "Superstate",
     "Form",
     "Color",
     "Capital",

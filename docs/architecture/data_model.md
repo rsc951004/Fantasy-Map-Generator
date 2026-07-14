@@ -195,7 +195,7 @@ States (countries) data is stored as an array of objects with strict element ord
 - `salesTax`: `number` - sales tax rate `0..1` charged on deals where this state is the seller. Generated from `form` (Monarchy 0.15, Theocracy 0.25, Union 0.07, Republic 0.05, Anarchy 0), jittered per state. Always `0` for neutrals
 - `pollTax`: `number` - flat poll tax per population point (rural + urban), credited to the treasury once per cycle. Generated from `form` (Monarchy 0.20, Theocracy 0.10, Union 0.13, Republic 0.15, Anarchy 0), jittered per state. Always `0` for neutrals
 - `treasury`: `number` - accumulated state currency balance. Reset and refilled by `States.collectTaxes()` from `deal.tax` (sales tax) plus `pollTax × (rural + urban)`. Always `0` for neutrals
-- `superstate`: `number` - identificador opcional del superestado al que pertenece el estado. El valor `0` o la ausencia de la propiedad indican que el estado no pertenece a ningún superestado
+- `superstate`: `number` - optional identifier of the superstate the state belongs to. A value of `0` or an absent property means the state does not belong to any superstate
 - `lock`: `boolean` - `true` if state is locked (not affected by regeneration)
 - `removed`: `boolean` - `true` if state is removed
 
@@ -214,16 +214,16 @@ States (countries) data is stored as an array of objects with strict element ord
 - `n`: `number` - `1` if regiment is a separate unit (like naval units), `0` is not
 - `u`: `Record<unitName, number>` - regiment content object
 
-## Superestados
+## Superstates
 
-Los superestados son agrupaciones cartográficas opcionales de estados. No sustituyen a los estados como actores de diplomacia, economía o ejército. Su territorio se deriva de los estados miembros, por lo que no existe un arreglo `pack.cells.superstate`.
+Superstates are optional cartographic groupings of states. They do not replace states as actors in diplomacy, economy, or military systems. Their territory is derived from member states, so there is no `pack.cells.superstate` array.
 
-- `i`: `number` - identificador del superestado, igual a su posición en `pack.superstates`; el elemento `0` representa la ausencia de superestado
-- `name`: `string` - nombre corto
-- `fullName`: `string` - nombre completo mostrado en la etiqueta cartográfica
-- `color`: `string` - color de la capa cartográfica
-- `capitalState`: `number` - identificador opcional del estado que contiene la capital imperial
-- `removed`: `boolean` - indica que el superestado fue eliminado
+- `i`: `number` - superstate identifier, equal to its position in `pack.superstates`; element `0` represents no superstate
+- `name`: `string` - short name
+- `fullName`: `string` - full name displayed on the cartographic label
+- `color`: `string` - cartographic layer color
+- `capitalState`: `number` - optional identifier of the state containing the imperial capital
+- `removed`: `boolean` - indicates that the superstate was removed
 
 ## Provinces
 
