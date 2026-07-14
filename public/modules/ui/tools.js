@@ -201,11 +201,8 @@ function recreateStates() {
   const localSeed = generateSeed();
   Math.random = aleaPRNG(localSeed);
 
-  const statesCount = +ensureEl("statesNumber").value;
-  if (!statesCount) {
-    tip(`<i>States Number</i> option value is zero. No counties are generated`, false, "error");
-    return null;
-  }
+  const statesCount = States.getDragmaRealmsCount();
+  ensureEl("statesNumber").value = String(statesCount);
 
   const validBurgs = pack.burgs.filter(b => b.i && !b.removed);
   if (!validBurgs.length) {

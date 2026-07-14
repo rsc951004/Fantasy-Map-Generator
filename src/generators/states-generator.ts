@@ -1,4 +1,5 @@
 import { mean, median, sum } from "d3";
+import { DRAGMA_REALMS } from "@/data/dragma";
 import {
   each,
   ensureEl,
@@ -161,6 +162,7 @@ class StatesModule {
     this.getPoles();
     this.findNeighbors();
     this.assignColors();
+    this.applyDragmaPreset();
     this.generateCampaigns();
     this.generateDiplomacy();
 
@@ -172,6 +174,44 @@ class StatesModule {
     pack.states.forEach(state => {
       state.superstate = state.i && !state.removed ? 1 : undefined;
     });
+  }
+
+  getDragmaRealmsCount() {
+    return DRAGMA_REALMS.length;
+  }
+
+  applyDragmaPreset() {
+    const availableStates = pack.states.filter(state => state.i && !state.removed);
+    const assignments = DRAGMA_REALMS.map(realm => {
+      const bestIndex = availableStates.reduce((bestIndex, state, index) => {
+        const [x, y] = pack.cells.p[state.center];
+        const distance = (x / graphWidth - realm.target[0]) ** 2 + (y / graphHeight - realm.target[1]) ** 2;
+        if (bestIndex === -1) return index;
+        const bestState = availableStates[bestIndex];
+        const [bestX, bestY] = pack.cells.p[bestState.center];
+        const bestDistance =
+          (bestX / graphWidth - realm.target[0]) ** 2 + (bestY / graphHeight - realm.target[1]) ** 2;
+        return distance < bestDistance ? index : bestIndex;
+      }, -1);
+
+      if (bestIndex === -1) return null;
+      return { realm, state: availableStates.splice(bestIndex, 1)[0] };
+    });
+
+    for (const assignment of assignments) {
+      if (!assignment) continue;
+      const { realm, state } = assignment;
+      const capital = pack.burgs[state.capital];
+      state.name = realm.name;
+      state.form = "Monarchy";
+      state.formName = "Kingdom";
+      state.fullName = `Kingdom of ${realm.name}`;
+      state.superstate = 1;
+      if (capital) capital.name = realm.capital;
+      const taxes = this.defineTaxRates(state);
+      state.salesTax = taxes.salesTax;
+      state.pollTax = taxes.pollTax;
+    }
   }
 
   expandStates() {
@@ -712,6 +752,8 @@ class StatesModule {
       s.salesTax = taxes.salesTax;
       s.pollTax = taxes.pollTax;
     }
+
+    this.applyDragmaPreset();
 
     TIME && console.timeEnd("defineStateForms");
   }

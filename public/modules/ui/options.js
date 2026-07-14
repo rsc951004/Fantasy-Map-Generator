@@ -600,7 +600,7 @@ function randomizeOptions() {
   // 'Options' settings
   if (randomize || !locked("points")) changeCellsDensity(4); // reset to default, no need to randomize
   if (randomize || !locked("template")) randomizeHeightmapTemplate();
-  if (randomize || !locked("statesNumber")) statesNumber.value = gauss(18, 5, 2, 30);
+  statesNumber.value = 12;
   if (randomize || !locked("provincesRatio")) provincesRatio.value = gauss(20, 10, 20, 100);
   if (randomize || !locked("manors")) {
     manorsInput.value = 1000;

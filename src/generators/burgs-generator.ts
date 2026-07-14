@@ -1,4 +1,5 @@
 import { quadtree } from "d3-quadtree";
+import { DRAGMA_REALMS } from "@/data/dragma";
 import { each, ensureEl, gauss, minmax, normalize, P, rn } from "../utils";
 import { type CultureType, DEFAULT_CULTURE_TYPE } from "./cultures-generator";
 import { NON_NAVIGABLE_LAKE_GROUPS } from "./features";
@@ -58,13 +59,17 @@ class BurgModule {
       ERROR && console.error("There is no populated cells with culture assigned. Cannot generate states");
       return burgs;
     }
+    const capitalCandidates =
+      populatedCells.length >= DRAGMA_REALMS.length
+        ? populatedCells
+        : cells.i.filter(i => cells.h[i] >= 20 && cells.culture[i]);
 
     let burgsQuadtree = quadtree();
 
     const generateCapitals = () => {
       const randomize = (score: number) => score * (0.5 + Math.random() * 0.5);
       const score = new Int16Array(cells.s.map(randomize));
-      const sorted = populatedCells.sort((a, b) => score[b] - score[a]);
+      const sorted = capitalCandidates.sort((a, b) => score[b] - score[a]);
 
       const capitalsNumber = getCapitalsNumber();
       let spacing = (graphWidth + graphHeight) / 2 / capitalsNumber; // min distance between capitals
@@ -149,13 +154,12 @@ class BurgModule {
     TIME && console.timeEnd("generateBurgs");
 
     function getCapitalsNumber() {
-      let number = (ensureEl("statesNumber") as HTMLInputElement).valueAsNumber;
-
-      if (populatedCells.length < number * 10) {
-        number = Math.floor(populatedCells.length / 10);
-        WARN && console.warn(`Not enough populated cells. Generating only ${number} capitals/states`);
+      const statesNumber = ensureEl("statesNumber") as HTMLInputElement;
+      statesNumber.value = String(DRAGMA_REALMS.length);
+      const number = Math.min(DRAGMA_REALMS.length, capitalCandidates.length);
+      if (number < DRAGMA_REALMS.length) {
+        WARN && console.warn(`Only ${number} Dragma capitals can be placed on this map`);
       }
-
       return number;
     }
 
